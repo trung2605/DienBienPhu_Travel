@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điện Biên Phủ Trip 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,400&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --primary: #388E3C;
+            --secondary: #D84315;
+            --dark: #263238;
+            --accent: #FBC02D;
+            --bg: #F5F7FA;
+        }
+
+        /* --- BASE & RESET --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: var(--bg); 
+            color: var(--dark); 
+            line-height: 1.6; 
+        }
+        h1, h2, h3, h4 { font-family: 'Merriweather', serif; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('./images/9.png');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+        .hero h1 { 
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: 10px; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6); 
+        }
+
+        /* --- STICKY NAVIGATION --- */
+        nav {
+            position: sticky;
+            top: 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 700;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        nav a.active, nav a:hover { background: var(--primary); color: white; }
+
+        /* --- CONTAINER & SECTION --- */
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .section-title {
+            text-align: center;
+            margin: 50px 0 30px;
+        }
+        .section-title span {
+            background: var(--dark);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: inline-block;
+        }
+
+        /* --- CARD COMPONENTS --- */
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--primary);
+            position: relative;
+        }
+        .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15); 
+        }
+        .card::after {
+            content: '\f06e';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 10px; right: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card:hover::after { opacity: 1; }
+        .card-img { height: 200px; }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .card-body { padding: 20px; }
+        .time-tag { 
+            color: var(--primary); 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+            margin-bottom: 5px; 
+            display: block; 
+        }
+        .card h3 { 
+            margin-bottom: 10px; 
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+        }
+        .card-desc { 
+            color: #607D8B; 
+            font-size: 0.95rem; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+        }
+
+        /* --- RESPONSIVE CARD LAYOUT --- */
+        @media(min-width: 768px) {
+            .card { flex-direction: row; height: 220px; }
+            .card-img { flex: 0 0 35%; height: 100%; }
+            .card-body { 
+                flex: 1; 
+                padding: 25px; 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: center; 
+            }
+        }
+
+        /* --- MODAL STYLES --- */
+        .modal-overlay {
+            position: fixed; 
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none; 
+            justify-content: center; 
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { 
+            display: flex; 
+            animation: fadeIn 0.3s; 
+        }
+        .modal-content {
+            background: white; 
+            width: 100%; 
+            max-width: 800px; 
+            max-height: 90vh;
+            border-radius: 15px; 
+            overflow-y: auto; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            animation: slideUp 0.3s;
+        }
+        .modal-header { 
+            position: relative; 
+            height: 250px; 
+        }
+        .modal-header img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+        .close-btn {
+            position: absolute; 
+            top: 15px; 
+            right: 15px;
+            background: white; 
+            color: var(--dark); 
+            width: 40px; 
+            height: 40px;
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            font-size: 1.2rem; 
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        .close-btn:hover { 
+            background: var(--secondary); 
+            color: white; 
+            transform: rotate(90deg);
+        }
+        .modal-body { padding: 30px; }
+        .modal-title { 
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: var(--primary); 
+            margin-bottom: 10px; 
+        }
+        .modal-subtitle { 
+            color: #78909C; 
+            font-style: italic; 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 15px; 
+        }
+        .detail-section { margin-bottom: 20px; }
+        .detail-section h4 { 
+            color: var(--dark); 
+            margin-bottom: 8px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .detail-section h4 i { color: var(--accent); }
+        .detail-text { 
+            font-size: 1rem; 
+            color: #37474F; 
+            text-align: justify; 
+            line-height: 1.7;
+        }
+        .modal-footer { 
+            padding: 20px 30px; 
+            background: #f9f9f9; 
+            border-top: 1px solid #eee; 
+            text-align: right; 
+        }
+        .btn-action { 
+            display: inline-block; 
+            padding: 10px 20px; 
+            background: var(--primary); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            transition: all 0.3s;
+        }
+        .btn-action:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- SCROLL BEHAVIOR --- */
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <h1>Điện Biên Phủ</h1>
+        <p>Hành trình Lịch sử & Thư giãn</p>
+    </header>
+
+    <nav>
+        <a href="#day15" onclick="setActive(this)">15/01</a>
+        <a href="#day16" onclick="setActive(this)">16/01</a>
+        <a href="#day17" onclick="setActive(this)">17/01</a>
+    </nav>
+
+    <div class="container">
+
+        <div id="day15">
+            <div class="section-title"><span>Tối 15/01: Văn Hóa Thái</span></div>
+            
+            <div class="card" onclick="openModal('img1')">
+                <div class="card-img">
+                    <img src="./images/1.png" alt="Bản Thái">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">18:00</span>
+                    <h3>Bản Mến / Bản Ten</h3>
+                    <p class="card-desc">Trải nghiệm văn hóa Thái bản địa với nhà sàn truyền thống, ẩm thực đặc sắc, rượu cần và điệu múa Xòe - Di sản văn hóa phi vật thể của nhân loại.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="day16">
+            <div class="section-title"><span>16/01: Lịch Sử Hào Hùng</span></div>
+
+            <div class="card" onclick="openModal('img2')">
+                <div class="card-img">
+                    <img src="./images/2.png" alt="Mường Thanh">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">05:30</span>
+                    <h3>Cánh Đồng Mường Thanh</h3>
+                    <p class="card-desc">Vựa lúa lớn nhất Tây Bắc, được mệnh danh "Nhất Thanh". Đón bình minh giữa biển lúa bao la, sương mù giăng trên cánh đồng tạo nên khung cảnh thơ mộng.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="openModal('img3')">
+                <div class="card-img">
+                    <img src="./images/3.png" alt="Mường Phăng">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">07:30</span>
+                    <h3>Sở Chỉ Huy Mường Phăng</h3>
+                    <p class="card-desc">Căn cứ chỉ huy chiến dịch lịch sử trong rừng già nguyên sinh, nơi Đại tướng Võ Nguyên Giáp đưa ra quyết định "Đánh chắc, tiến chắc" - bước ngoặt quan trọng dẫn đến chiến thắng.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="openModal('img4')">
+                <div class="card-img">
+                    <img src="./images/4.png" alt="Hồ Pá Khoang">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">09:00</span>
+                    <h3>Hồ Pá Khoang</h3>
+                    <p class="card-desc">Hồ nước rộng lớn giữa thiên nhiên hùng vĩ, có đảo hoa anh đào nở rộ. Trải nghiệm đi thuyền kayak, ngắm núi non bao quanh và không khí trong lành của vùng cao.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="openModal('img5')">
+                <div class="card-img">
+                    <img src="./images/5.png" alt="Panorama">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">14:00</span>
+                    <h3>Bảo Tàng Chiến Thắng</h3>
+                    <p class="card-desc">Nơi lưu giữ ký ức hào hùng của dân tộc. Điểm nhấn là bức tranh Panorama khổng lồ diện tích hơn 3.000m² tái hiện 4.500 nhân vật và toàn cảnh chiến dịch lịch sử.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="openModal('img6')">
+                <div class="card-img">
+                    <img src="./images/6.png" alt="Đồi A1">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">16:00</span>
+                    <h3>Đồi A1 (Eliane 2)</h3>
+                    <p class="card-desc">Cứ điểm kiên cố nhất của Pháp với hầm ngầm phức tạp và hố bộc phá 960kg - hiệu lệnh tổng công kích đêm 6/5/1954. Nơi chứng kiến những trận chiến ác liệt nhất.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="openModal('img7')">
+                <div class="card-img">
+                    <img src="./images/7.png" alt="Ecolodge Kê Nênh">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">17:30</span>
+                    <h3>Hoàng hôn Ecolodge Kê Nênh</h3>
+                    <p class="card-desc">Khu nghỉ dưỡng sinh thái với view panorama tuyệt đẹp nhìn xuống thung lũng Mường Thanh. Thời điểm vàng để check-in và thưởng thức cafe khi mặt trời lặn sau núi.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="day17">
+            <div class="section-title"><span>17/01: Thư Giãn & Tạm Biệt</span></div>
+
+            <div class="card" onclick="openModal('img8')">
+                <div class="card-img">
+                    <img src="./images/8.png" alt="Suối Uva">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">07:30</span>
+                    <h3>Suối Khoáng Nóng Uva</h3>
+                    <p class="card-desc">Nước khoáng nóng tự nhiên từ lòng đất, nhiệt độ ấm áp quanh năm, chứa khoáng chất tốt cho da và sức khỏe. Trải nghiệm thư giãn hoàn hảo giữa thiên nhiên núi rừng.</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="openModal('img9')">
+                <div class="card-img">
+                    <img src="./images/9.png" alt="Tượng đài D1">
+                </div>
+                <div class="card-body">
+                    <span class="time-tag">09:30</span>
+                    <h3>Tượng Đài Chiến Thắng (D1)</h3>
+                    <p class="card-desc">Biểu tượng uy nghiêm của chiến thắng trên đỉnh đồi D1, khắc họa 3 chiến sĩ trên nóc hầm De Castries. View toàn cảnh thành phố và thung lũng cực kỳ ấn tượng.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="trip-modal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModalDirectly()">×</button>
+                <img id="m-image" src="" alt="">
+            </div>
+            <div class="modal-body">
+                <h2 id="m-title" class="modal-title">Title</h2>
+                <p id="m-subtitle" class="modal-subtitle">Time & Location</p>
+                
+                <div class="detail-section">
+                    <h4><i class="fas fa-info-circle"></i> Giới thiệu</h4>
+                    <p id="m-desc" class="detail-text">...</p>
+                </div>
+
+                <div class="detail-section">
+                    <h4><i class="fas fa-history"></i> Thông tin thú vị</h4>
+                    <p id="m-history" class="detail-text">...</p>
+                </div>
+
+                <div class="detail-section">
+                    <h4><i class="fas fa-thumbs-up"></i> Lời khuyên</h4>
+                    <p id="m-tips" class="detail-text">...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="m-map-btn" href="#" target="_blank" class="btn-action"><i class="fas fa-map-marker-alt"></i> Xem bản đồ</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DATA - Thông tin chi tiết các địa điểm
+        const destinations = {
+            img1: {
+                title: "Bản Mến / Bản Ten",
+                time: "18:00 - Tối ngày 15",
+                image: "./images/1.png",
+                desc: "Bản văn hóa du lịch cộng đồng nổi tiếng với không gian nhà sàn Thái truyền thống. Đây là nơi lý tưởng để trải nghiệm văn hóa bản địa với các hoạt động như uống rượu cần, thưởng thức ẩm thực đặc sản và tham gia điệu múa Xòe Thái cùng người dân địa phương bên ánh lửa ấm áp.",
+                history: "Nơi lưu giữ điệu múa Xòe Thái - Di sản văn hóa phi vật thể của nhân loại được UNESCO công nhận. Bản Mến là một trong những bản văn hóa điển hình của dân tộc Thái trắng tại Điện Biên với lịch sử hàng trăm năm. Các gia đình ở đây vẫn duy trì lối sống truyền thống trên nhà sàn.",
+                tips: "Nhất định phải thử món 'Pa pỉnh tộp' (cá nướng trong ống tre) và 'Cơm lam'. Tham gia múa sạp với người dân địa phương để có trải nghiệm đáng nhớ. Nên mặc trang phục lịch sự và tôn trọng phong tục địa phương. Đặt trước nếu muốn ăn tối tại nhà sàn.",
+                map: "https://www.google.com/maps/search/Bản+Mến,+Thanh+Nưa,+Điện+Biên"
+            },
+            img2: {
+                title: "Cánh Đồng Mường Thanh",
+                time: "05:30 - Sáng ngày 16",
+                image: "./images/2.png",
+                desc: "Vựa lúa lớn nhất Tây Bắc với diện tích rộng hơn 2.000 hecta, tạo nên một 'biển lúa' xanh mướt. Cảnh đẹp nhất là lúc bình minh khi sương mù còn giăng trên cánh đồng, ánh nắng đầu tiên rọi xuống những ngọn lúa tạo nên khung cảnh huyền ảo.",
+                history: "Câu ca dao 'Nhất Thanh, nhì Lò, tam Than, tứ Tấc' ca ngợi Mường Thanh là vựa lúa số một. Đây là nơi diễn ra cuộc chiến lương thực khốc liệt trong chiến dịch Điện Biên Phủ, khi quân Pháp cố gắng cắt đứt đường tiếp tế lương thực của ta.",
+                tips: "Đến đây lúc 5h30 - 6h sáng để chụp ảnh bình minh đẹp nhất. Góc chụp đẹp: dọc Quốc lộ 12 đoạn gần sân bay Điện Biên. Nên mang theo áo ấm vì sáng sớm khá lạnh. Có thể kết hợp đi xe đạp dạo quanh cánh đồng.",
+                map: "https://www.google.com/maps/search/Cánh+đồng+Mường+Thanh"
+            },
+            img3: {
+                title: "Sở Chỉ Huy Mường Phăng",
+                time: "07:30 - Sáng ngày 16",
+                image: "./images/3.png",
+                desc: "Căn cứ chỉ huy chiến dịch lịch sử được thiết lập trong lòng rừng già nguyên sinh cách mặt trận 20km. Nơi Đại tướng Võ Nguyên Giáp và bộ chỉ huy sống và làm việc trong suốt 55 ngày đêm chiến dịch, điều khiển toàn bộ cuộc chiến.",
+                history: "Nơi ra đời quyết định lịch sử chuyển phương châm từ 'Đánh nhanh, thắng nhanh' sang 'Đánh chắc, tiến chắc' - bước ngoặt quan trọng dẫn đến thắng lợi. Hiện vẫn giữ nguyên những túp lều đơn sơ bằng tre nứa và các công sự phòng thủ.",
+                tips: "Không khí trong rừng rất mát mẻ. Đi giày thể thao để leo bậc thang đá lên khu căn cứ. Nên có hướng dẫn viên để hiểu rõ ý nghĩa lịch sử. Đường vào khá dốc và nhiều bậc thang. Mang theo nước uống.",
+                map: "https://www.google.com/maps/search/Sở+chỉ+huy+chiến+dịch+Điện+Biên+Phủ"
+            },
+            img4: {
+                title: "Hồ Pá Khoang",
+                time: "09:00 - Sáng ngày 16",
+                image: "./images/4.png",
+                desc: "Hồ nước rộng lớn nằm giữa thiên nhiên hùng vĩ với diện tích hơn 300 hecta, có đảo hoa anh đào nở rộ vào tháng 1-2. Nơi đây có không khí trong lành, mát mẻ quanh năm, là điểm dừng chân lý tưởng để thư giãn.",
+                history: "Hồ nhân tạo được xây dựng để cung cấp nước tưới cho cánh đồng Mường Thanh và phát điện. Tên gọi Pá Khoang trong tiếng Thái có nghĩa là 'rừng của ông'. Vào mùa xuân, hoa anh đào nở rộ trên đảo giữa hồ tạo nên cảnh sắc tuyệt đẹp.",
+                tips: "Thuê thuyền kayak hoặc thuyền đạp vịt để dạo một vòng hồ (khoảng 100-150k/người). Nếu đến tháng 1-2 sẽ được ngắm hoa anh đào. Khu vực có nhiều quán cafe view hồ đẹp. Mang theo kem chống nắng vì nắng khá gay gắt giữa trưa.",
+                map: "https://www.google.com/maps/search/Hồ+Pá+Khoang"
+            },
+            img5: {
+                title: "Bảo Tàng Chiến Thắng",
+                time: "14:00 - Chiều ngày 16",
+                image: "./images/5.png",
+                desc: "Công trình kiến trúc hiện đại nơi lưu giữ ký ức hào hùng của dân tộc. Điểm nhấn là bức tranh Panorama khổng lồ diện tích hơn 3.000m², cao 7m, dài 384m tái hiện 4.500 nhân vật và toàn cảnh chiến dịch với kỹ thuật 3D sống động.",
+                history: "Bức tranh Panorama được 20 họa sĩ Việt Nam và Triều Tiên vẽ trong 2 năm, hoàn thành năm 2014 nhân kỷ niệm 60 năm chiến thắng. Đây là bức tranh Panorama lớn nhất Đông Nam Á, tái hiện các giai đoạn then chốt của chiến dịch từ tháng 11/1953 đến 5/1954.",
+                tips: "Nên nghe hướng dẫn viên thuyết minh để hiểu ý nghĩa từng phân đoạn tranh. Vé vào cổng khoảng 40k/người. Dành ít nhất 1-2 tiếng để tham quan kỹ. Cấm chụp ảnh flash bên trong bảo tàng. Có audio guide bằng nhiều ngôn ngữ.",
+                map: "https://www.google.com/maps/search/Bảo+tàng+Chiến+thắng+lịch+sử+Điện+Biên+Phủ"
+            },
+            img6: {
+                title: "Di Tích Đồi A1",
+                time: "16:00 - Chiều ngày 16",
+                image: "./images/6.png",
+                desc: "Cứ điểm kiên cố nhất trong hệ thống phòng thủ của Pháp với hầm ngầm phức tạp sâu 10m, tường bê tông dày 3m. Đồi A1 (tên quân ta) hay Eliane 2 (tên Pháp) chứng kiến những trận chiến ác liệt nhất với hàng nghìn tấn đạn pháo được nã xuống.",
+                history: "Đêm 6/5/1954, quân ta cho nổ khối bộc phá 960kg tại đây - hiệu lệnh tổng công kích quyết định. Hố bộc phá sâu 10m, rộng 20m vẫn còn nguyên. Đây là nơi thượng tá Pháp Botella cùng 600 lính cố thủ đến phút cuối.",
+                tips: "Thăm hố bộc phá, hầm cố thủ và xác xe tăng còn sót lại. Đường vào hơi dốc nhưng đã được trải nhựa. Nên đến chiều mát để dễ tham quan. Có bảng thuyết minh chi tiết bằng tiếng Việt và tiếng Anh. View từ đỉnh đồi nhìn xuống thành phố rất đẹp.",
+                map: "https://www.google.com/maps/search/Di+tích+Đồi+A1"
+            },
+            img7: {
+                title: "Ecolodge Kê Nênh",
+                time: "17:30 - Chiều ngày 16",
+                image: "./images/7.png",
+                desc: "Khu nghỉ dưỡng sinh thái nằm trên đồi cao, điểm check-in mới nổi với view panorama 360 độ nhìn xuống toàn bộ thung lũng Mường Thanh. Đây là địa điểm tuyệt vời nhất để ngắm hoàng hôn tại Điện Biên với khung cảnh mặt trời lặn sau dãy núi, nhuộm vàng cánh đồng bên dưới.",
+                history: "Kê Nênh là một bản Thái cổ, tên gọi có nghĩa là 'nơi ở của chim kê' trong tiếng Thái. Khu ecolodge được xây dựng theo phong cách nhà sàn hiện đại, hòa quyện với thiên nhiên, là địa điểm du lịch sinh thái mới nổi từ năm 2020.",
+                tips: "Thời điểm vàng để chụp ảnh là từ 17h30-18h30 khi mặt trời lặn. Nên đặt bàn trước nếu muốn uống cafe hoặc ăn tối ở đây. Giá cafe 35-50k, có cả món ăn Tây Bắc. Đường lên hơi dốc, nên đi ô tô hoặc xe máy. Mang máy ảnh để lưu lại khoảnh khắc đẹp.",
+                map: "https://www.google.com/maps/search/Kê+Nênh+Điện+Biên"
+            },
+            img8: {
+                title: "Suối Khoáng Nóng Uva",
+                time: "07:30 - Sáng ngày 17",
+                image: "./images/8.png",
+                desc: "Khu suối khoáng nóng tự nhiên chảy từ lòng đất với nhiệt độ ấm áp quanh năm từ 32-38°C. Nước giàu các khoáng chất như lưu huỳnh, canxi, magie tốt cho da và xương khớp. Khu vực được quy hoạch thành resort với nhiều bể tắm công cộng và phòng riêng.",
+                history: "Tên 'Uva' bắt nguồn từ tiếng Thái, mang ý nghĩa về sự che chở, bảo vệ. Người dân địa phương đã biết đến nguồn nước khoáng này từ lâu đời và tin rằng nó có tác dụng chữa bệnh thần kỳ. Khu suối được khai thác du lịch từ những năm 2000.",
+                tips: "Mang theo đồ bơi và khăn tắm (hoặc thuê tại chỗ 20-30k). Giá vé vào cổng khoảng 60-80k/người. Nên tắm sáng sớm hoặc chiều mát để tránh đông người. Không nên ngâm quá 30 phút một lần. Có khu để đồ và phòng thay đồ sạch sẽ. Khu vực có nhà hàng phục vụ đồ ăn.",
+                map: "https://www.google.com/maps/search/Suối+khoáng+nóng+Uva"
+            },
+            img9: {
+                title: "Tượng Đài Chiến Thắng (D1)",
+                time: "09:30 - Sáng ngày 17",
+                image: "./images/9.png",
+                desc: "Biểu tượng uy nghiêm và trang nghiêm của chiến thắng lịch sử, nằm trên đỉnh đồi D1 cao 50m so với mặt đất. Tượng đài khắc họa 3 chiến sĩ bộ đội - đại diện cho 3 quân chủng bộ binh, pháo binh và dân công - cắm cờ trên nóc hầm chỉ huy De Castries.",
+                history: "Tượng đài được khánh thành ngày 7/5/1994 nhân kỷ niệm 40 năm chiến thắng. Đồi D1 chính là vị trí hầm chỉ huy của tướng De Castries - tư lệnh Pháp đầu hàng lúc 17h30 ngày 7/5/1954. Đây là địa điểm đánh dấu thời khắc lịch sử kết thúc 56 ngày đêm chiến đấu.",
+                tips: "View toàn cảnh thành phố từ đây cực kỳ ấn tượng, có thể nhìn thấy cả cánh đồng Mường Thanh. Thời điểm đẹp để chụp ảnh là sáng sớm hoặc chiều muộn tránh nắng gắt. Có bậc thang lên đỉnh đồi, nên mang giày thoải mái. Miễn phí tham quan.",
+                map: "https://www.google.com/maps/search/Tượng+đài+Chiến+thắng+Điện+Biên+Phủ"
+            }
+        };
+
+        // MODAL CONTROLS
+        const modal = document.getElementById('trip-modal');
+        const modalElements = {
+            image: document.getElementById('m-image'),
+            title: document.getElementById('m-title'),
+            subtitle: document.getElementById('m-subtitle'),
+            desc: document.getElementById('m-desc'),
+            history: document.getElementById('m-history'),
+            tips: document.getElementById('m-tips'),
+            mapBtn: document.getElementById('m-map-btn')
+        };
+
+        function openModal(id) {
+            const data = destinations[id];
+            if (!data) return;
+            
+            Object.entries({
+                image: data.image,
+                title: data.title,
+                subtitle: data.time,
+                desc: data.desc,
+                history: data.history,
+                tips: data.tips
+            }).forEach(([key, value]) => {
+                modalElements[key][key === 'image' ? 'src' : 'innerText'] = value;
+            });
+            
+            modalElements.mapBtn.href = data.map;
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => modal.classList.add('active'));
+        }
+
+        function closeModal(e) {
+            if (e.target.classList.contains('modal-overlay')) closeModalDirectly();
+        }
+
+        function closeModalDirectly() {
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function setActive(element) {
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) closeModalDirectly();
+        });
+    </script>
+</body>
+</html>
